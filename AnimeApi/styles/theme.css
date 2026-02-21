@@ -1,0 +1,585 @@
+/* =========================
+   Anime Vault — Tensura Theme
+   Woods + Adventurer Guild + Slime Accents
+   Drop-in stylesheet
+   ========================= */
+
+/* ---- CSS Reset-ish ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ---- Theme Variables ---- */
+:root {
+  /* Woods + night */
+  --bg-0: #07140f; /* deep pine */
+  --bg-1: #0b221a; /* pine shadow */
+  --bg-2: #123325; /* forest */
+  --mist: rgba(200, 255, 235, 0.06);
+
+  /* Guild parchment / wood */
+  --panel: rgba(22, 12, 8, 0.52);
+  --panel-2: rgba(14, 9, 6, 0.72);
+  --parchment: rgba(243, 233, 201, 0.92);
+  --parchment-2: rgba(231, 219, 185, 0.86);
+
+  /* Slime accent (Rimuru-ish) */
+  --slime: #39c7ff;
+  --slime-2: #0ea5e9;
+  --slime-3: #60a5fa;
+  --slime-glow: rgba(57, 199, 255, 0.35);
+
+  /* Status colors (subtle) */
+  --good: #68ffb4;
+  --warn: #ffd36e;
+  --bad: #ff6b6b;
+
+  /* Text */
+  --text: rgba(244, 255, 249, 0.92);
+  --muted: rgba(244, 255, 249, 0.68);
+
+  /* Borders / shadow */
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.3);
+
+  /* Radius */
+  --r-lg: 18px;
+  --r-md: 14px;
+  --r-sm: 10px;
+
+  /* Typography */
+  --font:
+    ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+/* ---- Woods background (no images) ---- */
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  overflow-x: hidden;
+
+  /* Layered gradient forest vibe */
+  background:
+    radial-gradient(
+      1000px 600px at 15% 10%,
+      rgba(57, 199, 255, 0.08),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 520px at 80% 15%,
+      rgba(104, 255, 180, 0.06),
+      transparent 55%
+    ),
+    radial-gradient(
+      1200px 700px at 50% 120%,
+      rgba(255, 211, 110, 0.05),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1) 35%, var(--bg-2) 100%);
+}
+
+/* Subtle “mist” + falling specks */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(200, 255, 235, 0.07),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 75% 25%,
+      rgba(200, 255, 235, 0.05),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 55% 70%,
+      rgba(200, 255, 235, 0.06),
+      transparent 45%
+    ),
+    repeating-radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.06) 0 1px,
+      transparent 1px 22px
+    );
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  filter: blur(0.2px);
+}
+
+/* ---- Layout helpers ---- */
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 22px 0 44px;
+}
+
+/* ---- Guild Header / Navbar ---- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 10, 0.7),
+    rgba(10, 12, 10, 0.35)
+  );
+  border-bottom: 1px solid var(--line);
+}
+
+.navbar .inner {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.brand .sigil {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0) 35%
+    ),
+    radial-gradient(circle at 50% 60%, var(--slime), var(--slime-2));
+  box-shadow: 0 0 18px var(--slime-glow);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.18);
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border 160ms ease;
+}
+
+.nav-links a:hover {
+  transform: translateY(-1px);
+  background: rgba(57, 199, 255, 0.1);
+  border: 1px solid rgba(57, 199, 255, 0.22);
+}
+
+/* ---- Page titles / guild plaque ---- */
+h1 {
+  margin: 14px 0 14px;
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.1;
+  letter-spacing: 0.4px;
+}
+
+.guild-plaque {
+  margin-top: 18px;
+  padding: 16px 16px;
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(17, 8, 5, 0.62), rgba(8, 6, 5, 0.68));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ---- Browse / Search Area ---- */
+.browse {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 22px 0 44px;
+}
+
+.search-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+input[type="text"],
+input[type="search"],
+textarea,
+select {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+  border-radius: 12px;
+  padding: 12px 12px;
+  transition:
+    border 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+input[type="text"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: rgba(244, 255, 249, 0.45);
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid rgba(57, 199, 255, 0.35);
+  box-shadow: 0 0 0 4px rgba(57, 199, 255, 0.12);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Buttons (slime-ish) ---- */
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: rgba(10, 12, 10, 0.92);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0) 38%
+    ),
+    linear-gradient(180deg, var(--slime), var(--slime-2));
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.34),
+    0 0 18px var(--slime-glow);
+  transition:
+    transform 140ms ease,
+    filter 140ms ease,
+    box-shadow 140ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.38),
+    0 0 22px var(--slime-glow);
+}
+
+button:active {
+  transform: translateY(0px) scale(0.99);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.4) brightness(0.9);
+  opacity: 0.65;
+  box-shadow: none;
+}
+
+/* Secondary / “guild” button */
+.btn-secondary {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+}
+
+/* Danger button */
+.btn-danger {
+  color: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 107, 107, 0.9),
+    rgba(190, 40, 40, 0.95)
+  );
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.34),
+    0 0 18px rgba(255, 107, 107, 0.22);
+}
+
+/* ---- Cards / Results ---- */
+.results {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.anime-card {
+  position: relative;
+  border-radius: var(--r-lg);
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 50%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  transition:
+    transform 170ms ease,
+    border 170ms ease,
+    background 170ms ease;
+}
+
+.anime-card:hover {
+  transform: translateY(-2px);
+  border: 1px solid rgba(57, 199, 255, 0.2);
+  background:
+    linear-gradient(180deg, rgba(57, 199, 255, 0.1), transparent 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.58));
+}
+
+.anime-card a {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.anime-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.anime-card h3 {
+  margin: 10px 0 10px;
+  font-size: 14.5px;
+  line-height: 1.25;
+  color: rgba(244, 255, 249, 0.92);
+}
+
+.anime-card .meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: -6px;
+  margin-bottom: 10px;
+}
+
+/* Slime “stamp” in corner */
+.anime-card::after {
+  content: "";
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0) 40%
+    ),
+    radial-gradient(
+      circle at 50% 60%,
+      rgba(57, 199, 255, 0.35),
+      rgba(57, 199, 255, 0)
+    );
+  filter: blur(0.2px);
+  opacity: 0.55;
+}
+
+/* ---- Details page / guild parchment panel ---- */
+.details,
+.vault {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 22px 0 44px;
+}
+
+.panel {
+  border-radius: var(--r-lg);
+  padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 55%),
+    linear-gradient(180deg, rgba(10, 6, 4, 0.66), rgba(0, 0, 0, 0.55));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow);
+}
+
+.panel .title-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--slime);
+  box-shadow: 0 0 10px var(--slime-glow);
+}
+
+/* ---- Vault grid ---- */
+.vault-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.vault-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-soft);
+}
+
+.vault-card img {
+  width: 90px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vault-card h3 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.vault-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* ---- Status select ---- */
+select {
+  padding: 10px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+select option {
+  background: #0b1411;
+  color: rgba(244, 255, 249, 0.92);
+}
+
+/* ---- Inline alerts ---- */
+.alert {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--muted);
+}
+
+.alert.error {
+  border-color: rgba(255, 107, 107, 0.25);
+  background: rgba(255, 107, 107, 0.08);
+  color: rgba(255, 200, 200, 0.92);
+}
+
+.alert.success {
+  border-color: rgba(104, 255, 180, 0.25);
+  background: rgba(104, 255, 180, 0.08);
+  color: rgba(220, 255, 240, 0.92);
+}
+
+/* ---- “Adventurer guild” footer ---- */
+.footer {
+  margin-top: 26px;
+  padding: 16px 0 30px;
+  text-align: center;
+  color: rgba(244, 255, 249, 0.55);
+  font-size: 12.5px;
+}
+
+.footer code {
+  font-family: var(--mono);
+  color: rgba(244, 255, 249, 0.7);
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 560px) {
+  .nav-links a {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .results {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+
+  .vault-card {
+    flex-direction: row;
+  }
+}
+.nav-links a.active {
+  background: rgba(57, 199, 255, 0.16);
+  border-color: rgba(57, 199, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(57, 199, 255, 0.08);
+}

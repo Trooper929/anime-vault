@@ -1,0 +1,23 @@
+const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+
+require("dotenv").config();
+require("./db");
+
+const favoritesRouter = require("./routes/favoritesRouter");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
+
+app.use("/api/favorites", favoritesRouter);
+
+app.get("/health", (req, res) => {
+  res.json({ ok: true, message: "Anime Vault API alive" });
+});
+
+const PORT = process.env.PORT || 9000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
