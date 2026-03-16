@@ -6,6 +6,8 @@ require("dotenv").config();
 require("./db");
 
 const favoritesRouter = require("./routes/favoritesRouter");
+const authRouter = require("./routes/authRouter");
+const animeOfTheDayRouter = require("./routes/animeOfTheDayRouter");
 
 const app = express();
 
@@ -13,7 +15,9 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
+app.use("/api/auth", authRouter);
 app.use("/api/favorites", favoritesRouter);
+app.use("/api/anime-of-the-day", animeOfTheDayRouter);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true, message: "Anime Vault API alive" });

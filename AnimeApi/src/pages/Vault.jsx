@@ -1,40 +1,118 @@
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import { FavoritesContext } from "../context/FavoritesContext.jsx";
+import StarRating from "../components/StarRating";
+import SkeletonCard from "../components/SkeletonCard";
+
+const STATUS_OPTIONS = ["All", "Planned", "Watching", "Completed"];
+const SORT_OPTIONS = [
+  { value: "date-desc", label: "Date Added (Newest)" },
+  { value: "date-asc", label: "Date Added (Oldest)" },
+  { value: "title-asc", label: "Title A–Z" },
+  { value: "title-desc", label: "Title Z–A" },
+  { value: "score-desc", label: "Score (High–Low)" },
+  { value: "score-asc", label: "Score (Low–High)" },
+];
 
 export default function Vault() {
-  const {
-    favorites,
-    loadingFavorites,
-    favoritesError,
-    deleteFavorite,
-    editFavorite,
-  } = useContext(FavoritesContext);
+  const { favorites, loadingFavorites, deleteFavorite, editFavorite } =
+    useContext(FavoritesContext);
 
-  if (loadingFavorites) return <p>Loading your Vault...</p>;
-  if (favoritesError) return <p style={{ color: "red" }}>{favoritesError}</p>;
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sortOrder, setSortOrder] = useState("date-desc");
+
+  const displayed = useMemo(() => {
+    let list = [...favorites];
+
+    if (filterStatus !== "All") {
+      list = list.filter((f) => f.status === filterStatus);
+    }
+
+    list.sort((a, b) => {
+      switch (sortOrder) {
+        case "title-asc":
+          return a.title.localeCompare(b.title);
+        case "title-desc":
+          return b.title.localeCompare(a.title);
+        case "score-desc":
+          return (b.score ?? -1) - (a.score ?? -1);
+        case "score-asc":
+          return (a.score ?? 999) - (b.score ?? 999);
+        case "date-asc":
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        default: // date-desc
+          return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
+
+    return list;
+  }, [favorites, filterStatus, sortOrder]);
+
+  if (loadingFavorites) {
+    return (
+      <div className="vault">
+        <h1>My Vault</h1>
+        <div className="vault-grid">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="vault">
-      <h1>My Vault</h1>
+      <div className="guild-plaque">
+        <h1>My Vault</h1>
+        <p className="meta">{favorites.length} anime saved.</p>
+      </div>
 
-      {favorites.length === 0 ? (
-        <p>No saved anime yet. Go to Browse and add some 👀</p>
+      {favorites.length > 0 && (
+        <div className="vault-controls">
+          <div className="vault-filter">
+            {STATUS_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className={`btn-secondary vault-filter-btn${filterStatus === s ? " vault-filter-btn--active" : ""}`}
+                onClick={() => setFilterStatus(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="vault-sort"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {displayed.length === 0 ? (
+        <div className="alert" style={{ marginTop: 16 }}>
+          {favorites.length === 0
+            ? "No saved anime yet. Go to Browse and add some."
+            : `No anime with status "${filterStatus}".`}
+        </div>
       ) : (
         <div className="vault-grid">
-          {favorites.map((fav) => (
-            <div key={fav._id} className="vault-card">
+          {displayed.map((fav, i) => (
+            <div key={fav._id} className="vault-card" style={{ '--card-index': i }}>
               {fav.imageUrl ? (
-                <img src={fav.imageUrl} alt={fav.title} width="120" />
+                <img src={fav.imageUrl} alt={fav.title} />
               ) : (
-                <div style={{ width: 120, height: 170, background: "#ddd" }} />
+                <div className="vault-card-img-placeholder" />
               )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <h3 style={{ margin: 0 }}>{fav.title}</h3>
-
-                <p style={{ margin: 0 }}>
-                  <strong>Status:</strong> {fav.status || "Planned"}
-                </p>
+              <div className="vault-card-body">
+                <h3>{fav.title}</h3>
 
                 <select
                   value={fav.status || "Planned"}
@@ -47,7 +125,21 @@ export default function Vault() {
                   <option value="Completed">Completed</option>
                 </select>
 
-                <button onClick={() => deleteFavorite(fav._id)}>Remove</button>
+                <div className="vault-score-label">
+                  Your Score:{" "}
+                  <strong>{fav.score !== null ? fav.score : "—"}</strong>
+                </div>
+                <StarRating
+                  score={fav.score}
+                  onChange={(val) => editFavorite(fav._id, { score: val })}
+                />
+
+                <button
+                  className="btn-danger vault-remove-btn"
+                  onClick={() => deleteFavorite(fav._id)}
+                >
+                  Remove
+                </button>
               </div>
             </div>
           ))}

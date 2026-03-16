@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAnimeById } from "../services/jikanApi";
 import { FavoritesContext } from "../context/FavoritesContext.jsx";
+import SkeletonCard from "../components/SkeletonCard";
 
 export default function Details() {
   const { id } = useParams();
@@ -16,64 +17,76 @@ export default function Details() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-
     getAnimeById(id)
-      .then((res) => {
-        setAnime(res.data.data);
-      })
-      .catch((err) => {
-        setError(err);
-        console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .then((res) => setAnime(res.data.data))
+      .catch((err) => setError(err))
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="details">
+        <div className="panel details-skeleton">
+          <SkeletonCard />
+        </div>
+      </div>
+    );
+  }
+
   if (error)
     return (
-      <p>
-        Monkeys breaking the site from within, working on a fix as we speak.
-      </p>
+      <div className="details">
+        <div className="panel">
+          <p>Something went wrong loading this anime. Try again.</p>
+        </div>
+      </div>
     );
-  if (!anime) return <p>Not found.</p>;
 
-  // 🔥 NEW: check if saved
+  if (!anime)
+    return (
+      <div className="details">
+        <div className="panel">
+          <p>Not found.</p>
+        </div>
+      </div>
+    );
+
   const existingFav = favorites.find((f) => f.mal_id === anime.mal_id);
   const isSaved = Boolean(existingFav);
 
   function toggleFavorite() {
-    if (isSaved) {
-      deleteFavorite(existingFav._id);
-    } else {
-      addFavorite(anime);
-    }
+    if (isSaved) deleteFavorite(existingFav._id);
+    else addFavorite(anime);
   }
 
   return (
     <div className="details">
       <div className="panel">
-        <h1>{anime.title}</h1>
-
-        {/* 🔥 Vault button */}
-        <button onClick={toggleFavorite} style={{ marginBottom: 12 }}>
-          {isSaved ? "★ Remove from Vault" : "☆ Save to Vault"}
-        </button>
-
-        <img
-          src={
-            anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url
-          }
-          alt={anime.title}
-          width="250"
-        />
-
-        <p>
-          <b>Score:</b> {anime.score ?? "N/A"}
-        </p>
-
-        <p>{anime.synopsis || "No synopsis available."}</p>
+        <div className="details-layout">
+          <img
+            src={
+              anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url
+            }
+            alt={anime.title}
+            className="details-img"
+          />
+          <div className="details-body">
+            <h1>{anime.title}</h1>
+            <div className="details-meta">
+              {anime.score && <span className="badge">★ {anime.score} MAL Score</span>}
+              {anime.status && <span className="badge">{anime.status}</span>}
+              {anime.episodes && (
+                <span className="badge">{anime.episodes} eps</span>
+              )}
+            </div>
+            <button onClick={toggleFavorite} className="details-vault-btn">
+              {isSaved ? "★ Remove from Vault" : "☆ Save to Vault"}
+            </button>
+            <p className="details-synopsis">
+              {anime.synopsis || "No synopsis available."}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
