@@ -1163,9 +1163,35 @@ select option {
   color: var(--muted);
 }
 
-.vault-remove-btn {
-  align-self: flex-start;
+.vault-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
   margin-top: 4px;
+}
+
+.vault-card-img-link {
+  display: block;
+  flex-shrink: 0;
+}
+
+.vault-card-img-link img,
+.vault-card-img-link .vault-card-img-placeholder {
+  transition: opacity 150ms ease;
+}
+
+.vault-card-img-link:hover img,
+.vault-card-img-link:hover .vault-card-img-placeholder {
+  opacity: 0.8;
+}
+
+.vault-card-title-link {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.vault-card-title-link:hover h3 {
+  color: var(--slime);
 }
 
 /* ---- Star rating ---- */
@@ -1239,8 +1265,10 @@ select option {
   gap: 8px;
 }
 
-.details-vault-btn {
-  align-self: flex-start;
+.details-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .details-synopsis {

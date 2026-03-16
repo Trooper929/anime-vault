@@ -1,4 +1,5 @@
 import { useContext, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { FavoritesContext } from "../context/FavoritesContext.jsx";
 import StarRating from "../components/StarRating";
 import SkeletonCard from "../components/SkeletonCard";
@@ -105,14 +106,18 @@ export default function Vault() {
         <div className="vault-grid">
           {displayed.map((fav, i) => (
             <div key={fav._id} className="vault-card" style={{ '--card-index': i }}>
-              {fav.imageUrl ? (
-                <img src={fav.imageUrl} alt={fav.title} />
-              ) : (
-                <div className="vault-card-img-placeholder" />
-              )}
+              <Link to={`/anime/${fav.mal_id}`} className="vault-card-img-link">
+                {fav.imageUrl ? (
+                  <img src={fav.imageUrl} alt={fav.title} />
+                ) : (
+                  <div className="vault-card-img-placeholder" />
+                )}
+              </Link>
 
               <div className="vault-card-body">
-                <h3>{fav.title}</h3>
+                <Link to={`/anime/${fav.mal_id}`} className="vault-card-title-link">
+                  <h3>{fav.title}</h3>
+                </Link>
 
                 <select
                   value={fav.status || "Planned"}
@@ -134,12 +139,29 @@ export default function Vault() {
                   onChange={(val) => editFavorite(fav._id, { score: val })}
                 />
 
-                <button
-                  className="btn-danger vault-remove-btn"
-                  onClick={() => deleteFavorite(fav._id)}
-                >
-                  Remove
-                </button>
+                <div className="vault-card-actions">
+                  <button
+                    className="btn-secondary"
+                    onClick={async () => {
+                      const url = `${window.location.origin}/anime/${fav.mal_id}`;
+                      const shareData = { title: fav.title, text: `Check out ${fav.title} — you should watch this!`, url };
+                      if (navigator.canShare && navigator.canShare(shareData)) {
+                        await navigator.share(shareData);
+                      } else {
+                        await navigator.clipboard.writeText(url);
+                        alert("Link copied to clipboard!");
+                      }
+                    }}
+                  >
+                    Share
+                  </button>
+                  <button
+                    className="btn-danger"
+                    onClick={() => deleteFavorite(fav._id)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -59,6 +59,21 @@ export default function Details() {
     else addFavorite(anime);
   }
 
+  async function handleShare() {
+    const shareData = {
+      title: anime.title,
+      text: `Check out ${anime.title} — you should watch this!`,
+      url: window.location.href,
+    };
+
+    if (navigator.canShare && navigator.canShare(shareData)) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
+    }
+  }
+
   return (
     <div className="details">
       <div className="panel">
@@ -79,9 +94,14 @@ export default function Details() {
                 <span className="badge">{anime.episodes} eps</span>
               )}
             </div>
-            <button onClick={toggleFavorite} className="details-vault-btn">
-              {isSaved ? "★ Remove from Vault" : "☆ Save to Vault"}
-            </button>
+            <div className="details-actions">
+              <button onClick={toggleFavorite}>
+                {isSaved ? "★ Remove from Vault" : "☆ Save to Vault"}
+              </button>
+              <button className="btn-secondary" onClick={handleShare}>
+                Share
+              </button>
+            </div>
             <p className="details-synopsis">
               {anime.synopsis || "No synopsis available."}
             </p>
