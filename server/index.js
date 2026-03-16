@@ -16,6 +16,7 @@ app.use(cors({
     "http://localhost:5173",
     "https://theanimevault.onrender.com",
     "https://theanimevault-app.onrender.com",
+    "https://animevault.onrender.com",
   ],
 }));
 app.use(express.json());
