@@ -7,9 +7,11 @@ export default function AnimeOfTheDayCard({ featured = false }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const BASE = import.meta.env.VITE_API_URL ?? "";
+
   useEffect(() => {
     axios
-      .get("/api/anime-of-the-day")
+      .get(`${BASE}/api/anime-of-the-day`)
       .then((res) => setAnime(res.data))
       .catch(() => setError("Could not load anime of the day."))
       .finally(() => setLoading(false));

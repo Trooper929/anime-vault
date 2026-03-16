@@ -1,11 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   server: {
     proxy: {
       "/api": "http://localhost:9000",
     },
   },
-});
+  ...(mode === "production" && {
+    define: {
+      __API_URL__: JSON.stringify("https://theanimevault.onrender.com"),
+    },
+  }),
+}));

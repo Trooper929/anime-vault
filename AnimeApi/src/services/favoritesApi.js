@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const favoritesApi = axios.create({ baseURL: "/api/favorites" });
+const BASE = import.meta.env.VITE_API_URL ?? "";
+
+const favoritesApi = axios.create({ baseURL: `${BASE}/api/favorites` });
 
 // Attach JWT on every request
 favoritesApi.interceptors.request.use((config) => {
