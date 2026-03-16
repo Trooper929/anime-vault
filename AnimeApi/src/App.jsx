@@ -30,11 +30,13 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
 
+        {/* Public browse routes */}
+        <Route path="/browse" element={<Browse />} />
+        <Route path="/anime/:id" element={<Details />} />
+
         {/* Protected routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Home />} />
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/anime/:id" element={<Details />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/stats" element={<Stats />} />
         </Route>

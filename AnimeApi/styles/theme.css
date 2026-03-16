@@ -1054,6 +1054,22 @@ select option {
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 }
 
+/* ---- Seasonal lock ---- */
+.seasonal-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 24px;
+  text-align: center;
+  margin: 32px auto;
+  max-width: 400px;
+}
+.seasonal-lock-icon { font-size: 2.5rem; }
+.seasonal-lock h2 { margin: 0; }
+.seasonal-lock p { margin: 0; }
+
 /* ---- Browse tabs ---- */
 .browse-tabs {
   display: flex;

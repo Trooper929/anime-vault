@@ -10,9 +10,24 @@ export default function AnimeOfTheDayCard({ featured = false }) {
   const BASE = import.meta.env.VITE_API_URL ?? "";
 
   useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const cached = localStorage.getItem("aotd");
+    if (cached) {
+      try {
+        const { date, data } = JSON.parse(cached);
+        if (date === today) {
+          setAnime(data);
+          setLoading(false);
+          return;
+        }
+      } catch { /* bad cache, fall through */ }
+    }
     axios
       .get(`${BASE}/api/anime-of-the-day`)
-      .then((res) => setAnime(res.data))
+      .then((res) => {
+        localStorage.setItem("aotd", JSON.stringify({ date: today, data: res.data }));
+        setAnime(res.data);
+      })
       .catch(() => setError("Could not load anime of the day."))
       .finally(() => setLoading(false));
   }, []);

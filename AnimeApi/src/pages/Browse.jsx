@@ -6,6 +6,7 @@ import {
   getSeasonNow,
 } from "../services/jikanApi";
 import { FavoritesContext } from "../context/FavoritesContext.jsx";
+import { useAuth } from "../context/AuthContext";
 import SkeletonCard from "../components/SkeletonCard";
 import GenreFilter from "../components/GenreFilter";
 import Pagination from "../components/Pagination";
@@ -13,6 +14,7 @@ import Pagination from "../components/Pagination";
 const TABS = ["search", "top", "seasonal"];
 
 export default function Browse() {
+  const { token } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const urlQuery = searchParams.get("q") || "";
@@ -54,7 +56,7 @@ export default function Browse() {
     try {
       let res;
       if (currentTab === "search") {
-        if (!currentQuery.trim()) {
+        if (!currentQuery.trim() && genres.length === 0) {
           setLoadingResults(false);
           return;
         }
@@ -157,6 +159,14 @@ export default function Browse() {
         {resultsError && <div className="alert error">{resultsError}</div>}
       </div>
 
+      {tab === "seasonal" && !token ? (
+        <div className="seasonal-lock panel">
+          <span className="seasonal-lock-icon">🔒</span>
+          <h2>Members Only</h2>
+          <p className="meta">Sign in to view current seasonal anime.</p>
+          <Link to="/signin"><button>Sign In</button></Link>
+        </div>
+      ) : (
       <div className="results">
         {loadingResults
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
@@ -178,13 +188,16 @@ export default function Browse() {
                       <p className="meta">★ {anime.score}</p>
                     )}
                   </Link>
-                  <button onClick={() => toggleFavorite(anime)}>
-                    {isSaved ? "★ In Vault (Remove)" : "☆ Save to Vault"}
-                  </button>
+                  {token && (
+                    <button onClick={() => toggleFavorite(anime)}>
+                      {isSaved ? "★ In Vault (Remove)" : "☆ Save to Vault"}
+                    </button>
+                  )}
                 </div>
               );
             })}
       </div>
+      )}
 
       {!loadingResults && results.length > 0 && (
         <Pagination
